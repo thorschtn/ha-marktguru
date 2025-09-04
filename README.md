@@ -15,17 +15,7 @@ Anyone who wants to complete the integration is welcome to join!
 # Installation & Configuration Guide
 ## 1. Requirements
 Home Assistant (Core, OS, Supervised, or Container)
-HACS (Home Assistant Community Store) is recommended, but not required
 ## 2. Installation
-With HACS (recommended)
-- Add repository:
-Open HACS → “Integrations” → Three-dot menu → “Custom repositories”
-→ Enter your GitHub repo URL (e.g., https://github.com/thorschtn/ha-marktguru)
-→ Type: Integration
-- Install integration:
-Search for “Marktguru” in HACS → Install
-- Restart Home Assistant
-
 Manual Installation
 - Download the repository from GitHub.
 - Copy the marktguru folder into your Home Assistant directory:
