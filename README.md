@@ -1,2 +1,2 @@
 # ha-marktguru
-AI generated prototype of an Home Assistant integration for Marktguru supermarket offer notifications
+AI generated proof of concep of an Home Assistant integration for Marktguru supermarket offer notifications
