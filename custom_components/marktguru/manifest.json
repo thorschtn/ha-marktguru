@@ -1,0 +1,10 @@
+{
+  "domain": "marktguru",
+  "name": "Marktguru",
+  "documentation": "https://github.com/thorschtn/ha-marktguru",
+  "dependencies": [],
+  "codeowners": ["@thorschtn"],
+  "requirements": [],
+  "version": "0.0.2",
+  "config_flow": true
+}
