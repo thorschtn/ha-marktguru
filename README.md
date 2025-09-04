@@ -9,6 +9,9 @@ New offers appear automatically, expired ones are removed — no restart or manu
 This is not a robust software implementation. It's merely an AI-generated proof of concept. I provide no support and don't have the expertise to develop it into a finished implementation.
 Anyone who wants to complete the integration is welcome to join!
 
+# Known Issues
+- Additions to the search term list are not saved. Workaround: Delete and recreate configuration.
+
 # Installation & Configuration Guide
 ## 1. Requirements
 Home Assistant (Core, OS, Supervised, or Container)
