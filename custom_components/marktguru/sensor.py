@@ -20,7 +20,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = MarktguruDataCoordinator(hass, zip_code, products)
     await coordinator.async_config_entry_first_refresh()
 
-    # Dynamische Verwaltung der Sensoren
     current_sensors = {}
 
     def get_sensor_id(query, idx):
@@ -39,7 +38,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 sensors.append(sensor)
                 current_sensors[sensor_id] = sensor
 
-    # Queries-Sensor als CoordinatorEntity
+    # Queries-Sensor als CoordinatorEntity (wird immer behalten)
     queries_sensor_id = f"marktguru_queries_{zip_code}"
     queries_sensor = MarktguruQueriesSensor(coordinator, products, zip_code)
     sensors.append(queries_sensor)
@@ -47,7 +46,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     async_add_entities(sensors, True)
 
-    # Callback für neue und zu entfernende Sensoren
     async def async_new_data():
         new_entities = []
         new_sensor_ids = set()
@@ -65,8 +63,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     new_entities.append(sensor)
                     current_sensors[sensor_id] = sensor
 
-        # Queries-Sensor immer behalten
+        # Queries-Sensor immer behalten/ggf. neu anlegen
+        queries_sensor_id = f"marktguru_queries_{zip_code}"
         new_sensor_ids.add(queries_sensor_id)
+        if queries_sensor_id not in current_sensors:
+            queries_sensor = MarktguruQueriesSensor(coordinator, coordinator.products, zip_code)
+            new_entities.append(queries_sensor)
+            current_sensors[queries_sensor_id] = queries_sensor
 
         # Entferne Sensoren, die nicht mehr gebraucht werden
         sensors_to_remove = []
