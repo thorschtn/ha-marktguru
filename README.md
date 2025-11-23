@@ -5,6 +5,9 @@ The Marktguru Home Assistant integration allows you to display current supermark
 For any products and postal codes, sensors with price, retailer, offer period, image, and other details are automatically created and updated hourly.
 New offers appear automatically, expired ones are removed — no restart or manual intervention required.
 
+<img width="1240" height="654" alt="image" src="https://github.com/user-attachments/assets/9fb88174-7c4a-4f0a-b2a2-a770a9655403" />
+
+
 # Disclaimer
 This is not a robust software implementation. It's merely an AI-generated proof of concept. I provide no support and don't have the expertise to develop it into a finished implementation.
 Anyone who wants to complete the integration is welcome to join!
