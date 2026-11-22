@@ -1,7 +1,7 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
-from .const import DOMAIN, CONF_PRODUCTS, CONF_ZIP
+from .const import DOMAIN, CONF_PRODUCTS, CONF_ZIP, CONF_RETAILERS
 
 def parse_products(products_str):
     result = []
@@ -39,10 +39,12 @@ class MarktguruConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         default_zip = user_input.get(CONF_ZIP) if user_input else ""
         default_products = user_input.get(CONF_PRODUCTS) if user_input else ""
+        default_retailers = user_input.get(CONF_RETAILERS, "") if user_input else ""
 
         schema = vol.Schema({
             vol.Required(CONF_ZIP, default=default_zip): str,
             vol.Required(CONF_PRODUCTS, default=default_products): str,
+            vol.Optional(CONF_RETAILERS, default=default_retailers): str,
         })
 
         return self.async_show_form(
@@ -73,8 +75,11 @@ class MarktguruOptionsFlowHandler(config_entries.OptionsFlow):
                 user_input[CONF_PRODUCTS] = products
                 return self.async_create_entry(title="", data=user_input)
 
-        zip_code = self.config_entry.data.get(CONF_ZIP, "")
-        products = self.config_entry.data.get(CONF_PRODUCTS, "")
+        # Optionen haben Vorrang vor den Daten der Ersteinrichtung
+        current = {**self.config_entry.data, **self.config_entry.options}
+        zip_code = current.get(CONF_ZIP, "")
+        products = current.get(CONF_PRODUCTS, "")
+        retailers = current.get(CONF_RETAILERS, "") or ""
         if isinstance(products, list):
             products_str = ", ".join(p["query"] for p in products)
         else:
@@ -83,6 +88,7 @@ class MarktguruOptionsFlowHandler(config_entries.OptionsFlow):
         schema = vol.Schema({
             vol.Required(CONF_ZIP, default=zip_code): str,
             vol.Required(CONF_PRODUCTS, default=products_str): str,
+            vol.Optional(CONF_RETAILERS, description={"suggested_value": retailers}): str,
         })
 
         return self.async_show_form(
