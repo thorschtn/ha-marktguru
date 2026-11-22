@@ -1,0 +1,19 @@
+# Daily check that both sources deliver offers.
+# Replace notify.mobile_app_DEIN_HANDY with your notify service.
+alias: 'Einkauf: Angebotsquellen überwachen'
+description: Prüft täglich um 12 Uhr, ob Marktguru (REWE) und meinprospekt (Marktkauf, EDEKA) Angebote liefern, und meldet einen Ausfall aufs Handy.
+triggers:
+- trigger: time
+  at: '12:00:00'
+conditions:
+- condition: template
+  value_template: '{{ marktguru | int(0) == 0 or meinprospekt | int(0) == 0 }}'
+actions:
+- action: notify.mobile_app_DEIN_HANDY
+  data:
+    title: 'Angebote: Quelle liefert nichts'
+    message: '{{ [''Marktguru (REWE)'' if marktguru | int(0) == 0 else '''', ''meinprospekt (Marktkauf, EDEKA)'' if meinprospekt | int(0) == 0 else ''''] | select | join('' und '') }} liefert aktuell keine Angebote. Karte und Einkaufs-Automation arbeiten solange ohne diese Quelle.'
+mode: single
+variables:
+  marktguru: '{{ states.sensor | selectattr(''entity_id'', ''match'', ''sensor\\.marktguru_'') | selectattr(''attributes.source'', ''defined'') | selectattr(''attributes.source'', ''eq'', ''marktguru'') | rejectattr(''state'', ''in'', [''unavailable'', ''unknown'']) | list | count }}'
+  meinprospekt: '{{ states.sensor | selectattr(''entity_id'', ''match'', ''sensor\\.marktguru_'') | selectattr(''attributes.source'', ''defined'') | selectattr(''attributes.source'', ''eq'', ''meinprospekt'') | rejectattr(''state'', ''in'', [''unavailable'', ''unknown'']) | list | count }}'

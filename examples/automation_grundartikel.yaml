@@ -1,0 +1,211 @@
+# Weekly staples on the shopping list, with stock-up quantities for good offers.
+# Adjust start (a Thursday), the artikel list and todo.einkauf_bring.
+alias: 'Einkauf: Grundartikel auf Bring!'
+description: Setzt donnerstags Grundartikel im Rhythmus auf die Bring!-Liste. Liegt ein Angebot bei Marktkauf, REWE oder EDEKA mindestens 15 % unter dem üblichen Grundpreis, wird die Menge auf Vorrat erhöht und der Artikel so lange nicht erneut eingetragen.
+triggers:
+- trigger: time
+  at: '18:00:00'
+conditions:
+- condition: time
+  weekday:
+  - thu
+actions:
+- action: todo.get_items
+  target:
+    entity_id: todo.einkauf_bring
+  data:
+    status: needs_action
+  response_variable: liste
+- variables:
+    offene: '{{ liste[''todo.einkauf_bring''][''items''] | map(attribute=''summary'') | map(''lower'') | list }}'
+    plan: |-
+      {%- set heute = now() -%}
+      {%- set woche = (heute.date() - strptime(start, '%Y-%m-%d').date()).days // 7 -%}
+      {%- set saison = obst_saison[heute.month - 1] -%}
+      {%- set fruit = ['apfel', 'birnen', 'bananen', 'clementinen', 'orangen', 'kaki', 'trauben', 'heidelbeeren', 'himbeeren', 'mango', 'avocado'] -%}
+      {%- set kein_obst = 'saft|aufstrich|schokol|gefroren|kohl|konfit|joghurt|schorle|nektar|sirup|likör|mus|getrocknet|tee|bonbon|riegel|kuchen|duft|spül|shampoo|essig|quark|chips|froop|havana|club|wein|sekt|vodka|whisk|bier' -%}
+      {#- Vorrat-Merker: "Name=Datum;Name=Datum", bis zu diesem Datum wird der Artikel nicht erneut eingetragen -#}
+      {%- set vt = states('input_text.einkauf_vorrat') -%}
+      {%- set vorrat = namespace(m={}) -%}
+      {%- for p in (vt.split(';') if vt not in ['unknown', 'unavailable', ''] else []) if '=' in p -%}
+      {%- if p.split('=')[1] >= heute.date().isoformat() -%}{%- set vorrat.m = dict(vorrat.m, **{p.split('=')[0]: p.split('=')[1]}) -%}{%- endif -%}
+      {%- endfor -%}
+      {#- Vom wöchentlichen Kassenbon-Abgleich gepflegte Werte: übliche Grundpreise und Rhythmus je Artikel -#}
+      {%- set werte = namespace(p={}, r={}) -%}
+      {%- set pt = states('input_text.einkauf_preise') -%}
+      {%- for p in (pt.split(';') if pt not in ['unknown', 'unavailable', ''] else []) if '=' in p -%}{%- set werte.p = dict(werte.p, **{p.split('=')[0]: p.split('=')[1] | float(0)}) -%}{%- endfor -%}
+      {%- set rt = states('input_text.einkauf_rhythmus') -%}
+      {%- for p in (rt.split(';') if rt not in ['unknown', 'unavailable', ''] else []) if '=' in p -%}{%- set werte.r = dict(werte.r, **{p.split('=')[0]: p.split('=')[1] | int(0)}) -%}{%- endfor -%}
+      {#- Alle aktuellen Angebote von Marktkauf, REWE und EDEKA, die Freitag/Samstag gelten -#}
+      {%- set ang = namespace(l=[]) -%}
+      {%- for s in states.sensor | selectattr('entity_id', 'match', 'sensor\\.marktguru_') | selectattr('attributes.retailer_name', 'defined') | rejectattr('attributes.retailer_name', 'none') -%}
+      {%- set a = s.attributes -%}
+      {%- set h = a.retailer_name | lower -%}
+      {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else '')) -%}
+      {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+      {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+      {%- if markt and (von is none or von <= heute + timedelta(days=1)) and (ende is none or ende >= heute + timedelta(hours=18)) -%}
+      {%- set preis = s.state | float(0) -%}
+      {%- set alt = a.old_price | float(0) -%}
+      {%- set ang.l = ang.l + [{'begriff': s.entity_id | regex_replace('^sensor\\.marktguru_(.*)_\\d+_\\d+$', '\\1'), 'markt': markt, 'produkt': a.product_name or '', 'text': ((a.brand_name or '') ~ ' ' ~ (a.product_name or '')) | lower, 'preis': preis, 'wert': ((a.grundpreis | float(0)) if a.grundpreis and a.grundpreis_einheit in ['kg', 'l'] else preis), 'gp': (a.grundpreis | float(0)) if a.grundpreis and a.grundpreis_einheit in ['kg', 'l'] else 0, 'gpe': a.grundpreis_einheit or '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0}] -%}
+      {%- endif -%}
+      {%- endfor -%}
+      {%- set euro = '%.2f' -%}
+      {%- set out = namespace(l=[]) -%}
+      {%- for art in artikel -%}
+      {%- set alle = (werte.r[art.name] if art.name in werte.r and werte.r[art.name] >= 1 else art.alle) -%}
+      {%- set normal = (werte.p[art.name] if art.name in werte.p and werte.p[art.name] > 0 else (art.normal | default(0))) -%}
+      {%- set faellig = woche % alle == art.versatz % alle -%}
+      {%- set gesperrt = art.name in vorrat.m -%}
+      {%- set best = namespace(gp=0, o=none) -%}
+      {%- for o in ang.l if art.begriffe is defined and o.begriff in art.begriffe and (art.regel is not defined or o.text is search(art.regel)) -%}
+      {%- set gp = o.gp if o.gp > 0 else ((o.preis / art.pack) if art.pack is defined else 0) -%}
+      {%- if gp > 0 and (best.o is none or gp < best.gp) -%}{%- set best.gp = gp -%}{%- set best.o = o -%}{%- endif -%}
+      {%- endfor -%}
+      {%- set ersparnis = (1 - best.gp / normal) if best.o is not none and normal > 0 else 0 -%}
+      {%- set lohnt = ersparnis >= 0.15 -%}
+      {%- set faktor = [(4 if ersparnis >= 0.30 else 2), art.max_faktor | default(1)] | min if lohnt else 1 -%}
+      {%- set normal_text = (art.anzahl ~ ' ' ~ art.einheit) if art.anzahl is defined else (art.menge | default('')) -%}
+      {%- if art.obst is defined -%}
+      {%- if faellig -%}
+      {#- Höchstens 5 Obstsorten: je Sorte das beste Angebot, rabattierte zuerst, dann nach Grundpreis -#}
+      {%- set sorten_namen = {'apfel': 'Äpfel', 'birnen': 'Birnen', 'bananen': 'Bananen', 'clementinen': 'Clementinen', 'orangen': 'Orangen', 'kaki': 'Kaki', 'trauben': 'Trauben', 'heidelbeeren': 'Heidelbeeren', 'himbeeren': 'Himbeeren', 'mango': 'Mango', 'avocado': 'Avocado'} -%}
+      {%- set tipps = namespace(l=[], sorten=[]) -%}
+      {%- set obst = ang.l | selectattr('begriff', 'in', fruit) | list -%}
+      {%- for o in (obst | selectattr('rabatt', 'gt', 0) | sort(attribute='rabatt', reverse=true) | list) + (obst | selectattr('rabatt', 'eq', 0) | sort(attribute='wert') | list) -%}
+      {%- if o.begriff not in tipps.sorten and tipps.l | count < 5 and not o.text is search(kein_obst) -%}
+      {%- set tipps.sorten = tipps.sorten + [o.begriff] -%}
+      {%- set tipps.l = tipps.l + [sorten_namen[o.begriff] ~ ' ' ~ (euro | format(o.preis) | replace('.', ',')) ~ ' € (' ~ (('−' ~ o.rabatt ~ ' %, ') if o.rabatt > 0 else '') ~ o.markt ~ ')'] -%}
+      {%- endif -%}
+      {%- endfor -%}
+      {%- set out.l = out.l + [{'name': art.name, 'text': (tipps.l | join('; ')) if tipps.l else ('Saison: ' ~ saison), 'angebot': (1 if tipps.l else 0), 'vorrat': ''}] -%}
+      {%- endif -%}
+      {%- elif lohnt and not gesperrt -%}
+      {%- set o = best.o -%}
+      {%- set hinweis = 'Angebot ' ~ o.markt ~ ': ' ~ (o.produkt | title) ~ ' ' ~ (euro | format(o.preis) | replace('.', ',')) ~ ' € (' ~ (euro | format(best.gp) | replace('.', ',')) ~ ' €/' ~ (o.gpe or art.je | default('Einheit')) ~ ', −' ~ (ersparnis * 100) | round | int ~ ' % ggü. üblich)' -%}
+      {%- set menge = ((art.anzahl * faktor) ~ ' ' ~ art.einheit) if art.anzahl is defined else normal_text -%}
+      {%- set reichweite = faktor * alle -%}
+      {%- set out.l = out.l + [{'name': art.name, 'text': ([menge, hinweis, ('Vorrat für ' ~ reichweite ~ ' Wochen') if faktor > 1 else ''] | select | join(' · ')), 'angebot': 1, 'vorrat': (heute.date() + timedelta(days=reichweite * 7 - 1)).isoformat() if faktor > 1 else ''}] -%}
+      {%- elif faellig and not gesperrt -%}
+      {%- set out.l = out.l + [{'name': art.name, 'text': normal_text, 'angebot': 0, 'vorrat': ''}] -%}
+      {%- endif -%}
+      {%- endfor -%}
+      {%- set merker = namespace(m=vorrat.m) -%}
+      {%- for e in out.l if e.vorrat -%}{%- set merker.m = dict(merker.m, **{e.name: e.vorrat}) -%}{%- endfor -%}
+      {%- set teile = namespace(l=[]) -%}
+      {%- for k, v in merker.m.items() -%}{%- set teile.l = teile.l + [k ~ '=' ~ v] -%}{%- endfor -%}
+      {{ {'eintraege': out.l, 'vorrat': teile.l | join(';')} | tojson }}
+- repeat:
+    for_each: '{{ plan.eintraege }}'
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: '{{ (repeat.item.name | lower) not in offene }}'
+        sequence:
+        - action: todo.add_item
+          target:
+            entity_id: todo.einkauf_bring
+          data:
+            item: '{{ repeat.item.name }}'
+            description: '{{ repeat.item.text }}'
+      - conditions:
+        - condition: template
+          value_template: '{{ repeat.item.angebot == 1 }}'
+        sequence:
+        - action: todo.update_item
+          target:
+            entity_id: todo.einkauf_bring
+          data:
+            item: '{{ repeat.item.name }}'
+            description: '{{ repeat.item.text }}'
+- action: input_text.set_value
+  target:
+    entity_id: input_text.einkauf_vorrat
+  data:
+    value: '{{ plan.vorrat }}'
+mode: single
+variables:
+  start: '2026-11-26'
+  obst_saison:
+  - Orangen, Clementinen, Kiwi, Äpfel
+  - Blutorangen, Kiwi, Birnen, Äpfel
+  - Blutorangen, Kiwi, Äpfel
+  - Rhabarber, erste Erdbeeren, Äpfel
+  - Erdbeeren, Rhabarber
+  - Erdbeeren, Kirschen, Himbeeren, Johannisbeeren
+  - Kirschen, Heidelbeeren, Himbeeren, Aprikosen, Pfirsiche
+  - Pflaumen, Brombeeren, Heidelbeeren, Nektarinen, Melone
+  - Zwetschgen, Trauben, Birnen, Feigen, Äpfel
+  - Äpfel, Birnen, Trauben, Feigen, Quitten
+  - Clementinen, Kaki, Birnen, Granatapfel, Äpfel
+  - Orangen, Clementinen, Pomelo, Granatapfel, Äpfel
+  artikel:
+  - name: Milch
+    alle: 1
+    versatz: 0
+    anzahl: 2
+    einheit: Stück
+    begriffe:
+    - h_milch
+    normal: 1.2
+    pack: 1
+    max_faktor: 4
+    je: l
+  - name: Joghurt
+    alle: 1
+    versatz: 0
+    anzahl: 5
+    einheit: Stück
+    begriffe:
+    - almighurt
+    normal: 2.2
+    max_faktor: 1
+  - name: Brötchen zum Aufbacken
+    alle: 1
+    versatz: 0
+    menge: 6-9 Stück, je nach Packung
+  - name: Aufschnitt
+    alle: 1
+    versatz: 0
+    menge: ''
+  - name: Obst der Woche
+    alle: 1
+    versatz: 0
+    menge: ''
+    obst: true
+  - name: Softdrinks
+    alle: 1
+    versatz: 0
+    menge: Pepsi / Fanta Lemon Zero / Fuze Tea
+    begriffe:
+    - pepsi
+    - fanta
+    - fuze_tea
+    normal: 1.2
+    max_faktor: 3
+  - name: Eier
+    alle: 2
+    versatz: 0
+    anzahl: 10
+    einheit: Stück
+  - name: Butter
+    alle: 2
+    versatz: 1
+    anzahl: 1
+    einheit: Stück
+    begriffe:
+    - butter
+    regel: butter(?![a-zäöüß-])
+    normal: 4.6
+    pack: 0.25
+    max_faktor: 3
+    je: kg
+  - name: Wasser Black Forest
+    alle: 3
+    versatz: 2
+    menge: 2x medium, 1x still
+    begriffe:
+    - black_forest
+    normal: 0.99
+    max_faktor: 2

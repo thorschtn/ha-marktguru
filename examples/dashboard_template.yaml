@@ -1,0 +1,99 @@
+# Add this block at the top level of the dashboard (raw configuration editor).
+# If the dashboard already has button_card_templates, add only the angebot_zeile entry.
+button_card_templates:
+  angebot_zeile:
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    styles:
+      card:
+      - padding: 7px 8px 7px 14px
+      - border-radius: '0'
+      - border: none
+      - border-bottom: 1px solid var(--divider-color)
+      - box-shadow: none
+      - background: none
+      - cursor: default
+      grid:
+      - grid-template-areas: '"info preis plus"'
+      - grid-template-columns: 1fr auto 42px
+      - column-gap: 8px
+      - align-items: center
+      custom_fields:
+        info:
+        - justify-self: stretch
+        - min-width: '0'
+        preis:
+        - justify-self: end
+        - text-align: right
+        - white-space: nowrap
+        plus:
+        - justify-self: end
+    custom_fields:
+      info:
+        card:
+          type: custom:button-card
+          show_icon: false
+          show_name: false
+          show_state: false
+          tap_action:
+            action: url
+            url_path: '[[[ return variables.link ]]]'
+          styles:
+            card:
+            - padding: '0'
+            - border: none
+            - box-shadow: none
+            - background: none
+            - border-radius: '0'
+            grid:
+            - grid-template-areas: '"img text"'
+            - grid-template-columns: 46px 1fr
+            - column-gap: 8px
+            - align-items: center
+            custom_fields:
+              text:
+              - justify-self: start
+              - text-align: left
+              - white-space: normal
+              - min-width: '0'
+          custom_fields:
+            img: '[[[ return variables.bild ? `<img src="${variables.bild}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:#fff;display:block">` : ''''; ]]]'
+            text: '[[[ return `<div style="font-size:14px;line-height:1.3">${variables.name}</div>` + (variables.infos ? `<div style="font-size:12px;line-height:1.3;color:var(--secondary-text-color)">${variables.infos}</div>` : ''''); ]]]'
+      preis: '[[[ return `<div style="font-size:17px;font-weight:600;line-height:1.25">${variables.preis} €</div>` + (variables.alt ? `<div style="font-size:12px;line-height:1.3;color:var(--secondary-text-color)"><s>${variables.alt} €</s> <span style="font-size:11px;font-weight:600;color:#fff;background:#d6453d;border-radius:4px;padding:1px 5px">−${variables.rabatt} %</span></div>` : ''''); ]]]'
+      plus:
+        card:
+          type: custom:button-card
+          icon: mdi:cart-plus
+          show_name: false
+          show_state: false
+          tap_action:
+            action: call-service
+            service: todo.add_item
+            service_data:
+              entity_id: todo.einkauf_bring
+              item: '[[[ return variables.eintrag ]]]'
+              description: '[[[ return variables.notiz ]]]'
+            data:
+              entity_id: todo.einkauf_bring
+              item: '[[[ return variables.eintrag ]]]'
+              description: '[[[ return variables.notiz ]]]'
+          styles:
+            card:
+            - width: 38px
+            - height: 38px
+            - padding: '0'
+            - border-radius: 50%
+            - border: none
+            - box-shadow: none
+            - background: rgba(127,127,127,0.2)
+            icon:
+            - width: 20px
+            - color: var(--primary-text-color)

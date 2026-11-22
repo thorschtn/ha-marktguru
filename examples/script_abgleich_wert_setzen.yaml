@@ -1,0 +1,71 @@
+# Script to set usual price, rhythm and stock date per article (e.g. from receipts).
+einkauf_abgleich_wert_setzen:
+  alias: 'Einkauf: Abgleich-Wert setzen'
+  description: 'Setzt für einen Artikel der Einkaufs-Automation den üblichen Grundpreis, den Kaufrhythmus in Wochen und/oder das Datum, bis zu dem ein Vorrat reicht. Erlaubte Artikel (exakt so schreiben): Milch, Joghurt, Brötchen zum Aufbacken, Aufschnitt, Obst der Woche, Softdrinks, Eier, Butter, Wasser Black Forest.'
+  icon: mdi:database-edit
+  mode: queued
+  max: 30
+  fields:
+    artikel:
+      name: Artikel
+      description: 'Name des Artikels, exakt wie in der Automation: Milch, Joghurt, Brötchen zum Aufbacken, Aufschnitt, Obst der Woche, Softdrinks, Eier, Butter, Wasser Black Forest'
+      required: true
+      selector:
+        text: {}
+    normalpreis:
+      name: Üblicher Grundpreis
+      description: Üblicher Grundpreis in Euro je Liter oder Kilogramm, zum Beispiel 1.20. Weglassen, wenn er nicht geändert werden soll.
+      selector:
+        number:
+          min: 0.05
+          max: 100
+          step: 0.01
+          mode: box
+    wochen:
+      name: Rhythmus in Wochen
+      description: Abstand in ganzen Wochen, in dem der Artikel gekauft wird (1 bis 8). Weglassen, wenn er nicht geändert werden soll.
+      selector:
+        number:
+          min: 1
+          max: 8
+          step: 1
+          mode: box
+    vorrat_bis:
+      name: Vorrat reicht bis
+      description: Datum im Format JJJJ-MM-TT, bis zu dem der Vorrat reicht. Der Wert keiner löscht den Vorrat-Merker. Weglassen, wenn er nicht geändert werden soll.
+      selector:
+        text: {}
+  sequence:
+  - if:
+    - condition: template
+      value_template: '{{ artikel not in [''Milch'',''Joghurt'',''Brötchen zum Aufbacken'',''Aufschnitt'',''Obst der Woche'',''Softdrinks'',''Eier'',''Butter'',''Wasser Black Forest''] }}'
+    then:
+    - stop: Unbekannter Artikel
+      error: true
+  - if:
+    - condition: template
+      value_template: '{{ normalpreis is defined and normalpreis | float(0) > 0 }}'
+    then:
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.einkauf_preise
+      data:
+        value: '{% set ns = namespace(l=[]) %}{% set alt = states(''input_text.einkauf_preise'') %}{% for p in (alt.split('';'') if alt not in [''unknown'', ''unavailable'', ''''] else []) if ''='' in p and p.split(''='')[0] != artikel %}{% set ns.l = ns.l + [p] %}{% endfor %}{{ (ns.l + ([artikel ~ ''='' ~ (''%.2f'' | format(normalpreis | float(0)))])) | join('';'') }}'
+  - if:
+    - condition: template
+      value_template: '{{ wochen is defined and wochen | int(0) >= 1 }}'
+    then:
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.einkauf_rhythmus
+      data:
+        value: '{% set ns = namespace(l=[]) %}{% set alt = states(''input_text.einkauf_rhythmus'') %}{% for p in (alt.split('';'') if alt not in [''unknown'', ''unavailable'', ''''] else []) if ''='' in p and p.split(''='')[0] != artikel %}{% set ns.l = ns.l + [p] %}{% endfor %}{{ (ns.l + ([artikel ~ ''='' ~ (wochen | int)])) | join('';'') }}'
+  - if:
+    - condition: template
+      value_template: '{{ vorrat_bis is defined and (vorrat_bis == ''keiner'' or vorrat_bis is match(''^\\d{4}-\\d{2}-\\d{2}$'')) }}'
+    then:
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.einkauf_vorrat
+      data:
+        value: '{% set ns = namespace(l=[]) %}{% set alt = states(''input_text.einkauf_vorrat'') %}{% for p in (alt.split('';'') if alt not in [''unknown'', ''unavailable'', ''''] else []) if ''='' in p and p.split(''='')[0] != artikel %}{% set ns.l = ns.l + [p] %}{% endfor %}{{ (ns.l + ([artikel ~ ''='' ~ vorrat_bis] if vorrat_bis != ''keiner'' else [])) | join('';'') }}'

@@ -1,0 +1,653 @@
+# Offers card with tabs, search and add-to-list button. Paste as a manual card.
+# Replace DEINE_PLZ with your ZIP code (entity id of the search sensor)
+# and todo.einkauf_bring in dashboard_template.yaml with your shopping list entity.
+type: vertical-stack
+grid_options:
+  columns: full
+cards:
+- type: heading
+  heading: Angebote der Woche
+  icon: mdi:tag-multiple
+  heading_style: title
+- type: entities
+  entities:
+  - entity: input_text.angebote_suche
+    name: Suche in den Prospekten
+    icon: mdi:magnify
+  card_mod:
+    style: |-
+      ha-card { border-radius: 16px; }
+      #states { padding: 4px 12px; }
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_text.angebote_suche
+    state:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: horizontal-stack
+    cards:
+    - type: custom:button-card
+      entity: input_select.angebote_reiter
+      name: Obst
+      icon: mdi:fruit-cherries
+      show_icon: true
+      show_state: false
+      layout: icon_name
+      tap_action:
+        action: call-service
+        service: input_select.select_option
+        service_data:
+          entity_id: input_select.angebote_reiter
+          option: Obst
+        data:
+          entity_id: input_select.angebote_reiter
+          option: Obst
+      styles:
+        card:
+        - padding: 8px 6px
+        - border-radius: 999px
+        - font-size: 13px
+        - font-weight: '500'
+        - border: none
+        - box-shadow: none
+        - background: var(--ha-card-background, var(--card-background-color))
+        - color: var(--primary-text-color)
+        icon:
+        - width: 18px
+        - color: var(--primary-text-color)
+        img_cell:
+        - width: 22px
+        grid:
+        - grid-template-columns: min-content min-content
+        - justify-content: center
+        - column-gap: 4px
+        name:
+        - justify-self: start
+      state:
+      - value: Obst
+        styles:
+          card:
+          - background: var(--primary-color)
+          - color: 'var(--text-primary-color, #fff)'
+          icon:
+          - color: 'var(--text-primary-color, #fff)'
+    - type: custom:button-card
+      entity: input_select.angebote_reiter
+      name: Marktkauf
+      icon: mdi:cart
+      show_icon: true
+      show_state: false
+      layout: icon_name
+      tap_action:
+        action: call-service
+        service: input_select.select_option
+        service_data:
+          entity_id: input_select.angebote_reiter
+          option: Marktkauf
+        data:
+          entity_id: input_select.angebote_reiter
+          option: Marktkauf
+      styles:
+        card:
+        - padding: 8px 6px
+        - border-radius: 999px
+        - font-size: 13px
+        - font-weight: '500'
+        - border: none
+        - box-shadow: none
+        - background: var(--ha-card-background, var(--card-background-color))
+        - color: var(--primary-text-color)
+        icon:
+        - width: 18px
+        - color: var(--primary-text-color)
+        img_cell:
+        - width: 22px
+        grid:
+        - grid-template-columns: min-content min-content
+        - justify-content: center
+        - column-gap: 4px
+        name:
+        - justify-self: start
+      state:
+      - value: Marktkauf
+        styles:
+          card:
+          - background: var(--primary-color)
+          - color: 'var(--text-primary-color, #fff)'
+          icon:
+          - color: 'var(--text-primary-color, #fff)'
+    - type: custom:button-card
+      entity: input_select.angebote_reiter
+      name: REWE
+      icon: mdi:storefront
+      show_icon: true
+      show_state: false
+      layout: icon_name
+      tap_action:
+        action: call-service
+        service: input_select.select_option
+        service_data:
+          entity_id: input_select.angebote_reiter
+          option: REWE
+        data:
+          entity_id: input_select.angebote_reiter
+          option: REWE
+      styles:
+        card:
+        - padding: 8px 6px
+        - border-radius: 999px
+        - font-size: 13px
+        - font-weight: '500'
+        - border: none
+        - box-shadow: none
+        - background: var(--ha-card-background, var(--card-background-color))
+        - color: var(--primary-text-color)
+        icon:
+        - width: 18px
+        - color: var(--primary-text-color)
+        img_cell:
+        - width: 22px
+        grid:
+        - grid-template-columns: min-content min-content
+        - justify-content: center
+        - column-gap: 4px
+        name:
+        - justify-self: start
+      state:
+      - value: REWE
+        styles:
+          card:
+          - background: var(--primary-color)
+          - color: 'var(--text-primary-color, #fff)'
+          icon:
+          - color: 'var(--text-primary-color, #fff)'
+    - type: custom:button-card
+      entity: input_select.angebote_reiter
+      name: EDEKA
+      icon: mdi:store
+      show_icon: true
+      show_state: false
+      layout: icon_name
+      tap_action:
+        action: call-service
+        service: input_select.select_option
+        service_data:
+          entity_id: input_select.angebote_reiter
+          option: EDEKA
+        data:
+          entity_id: input_select.angebote_reiter
+          option: EDEKA
+      styles:
+        card:
+        - padding: 8px 6px
+        - border-radius: 999px
+        - font-size: 13px
+        - font-weight: '500'
+        - border: none
+        - box-shadow: none
+        - background: var(--ha-card-background, var(--card-background-color))
+        - color: var(--primary-text-color)
+        icon:
+        - width: 18px
+        - color: var(--primary-text-color)
+        img_cell:
+        - width: 22px
+        grid:
+        - grid-template-columns: min-content min-content
+        - justify-content: center
+        - column-gap: 4px
+        name:
+        - justify-self: start
+      state:
+      - value: EDEKA
+        styles:
+          card:
+          - background: var(--primary-color)
+          - color: 'var(--text-primary-color, #fff)'
+          icon:
+          - color: 'var(--text-primary-color, #fff)'
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_text.angebote_suche
+    state_not:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:button-card
+    entity: input_text.angebote_suche
+    name: Suche löschen
+    icon: mdi:close
+    show_icon: true
+    show_state: false
+    layout: icon_name
+    tap_action:
+      action: call-service
+      service: input_text.set_value
+      service_data:
+        entity_id: input_text.angebote_suche
+        value: ''
+      data:
+        entity_id: input_text.angebote_suche
+        value: ''
+    styles:
+      card:
+      - padding: 8px 6px
+      - border-radius: 999px
+      - font-size: 13px
+      - font-weight: '500'
+      - border: none
+      - box-shadow: none
+      - background: var(--primary-color)
+      - color: 'var(--text-primary-color, #fff)'
+      icon:
+      - width: 18px
+      - color: 'var(--text-primary-color, #fff)'
+      img_cell:
+      - width: 22px
+      grid:
+      - grid-template-columns: min-content min-content
+      - justify-content: center
+      - column-gap: 4px
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_select.angebote_reiter
+    state: Obst
+  - condition: state
+    entity: input_text.angebote_suche
+    state:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:auto-entities
+    show_empty: true
+    card:
+      type: entities
+      card_mod:
+        style:
+          .: |-
+            ha-card { max-height: 540px; overflow-y: auto; overflow-x: hidden; border-radius: 16px; }
+            #states { padding: 0 0 4px; }
+            #states > * { margin: 0 !important; }
+            #states > div > * { overflow: visible; }
+    filter:
+      template: |-
+        {%- set reiter = 'Obst' -%}
+        {%- set fruit = ['apfel', 'birnen', 'bananen', 'clementinen', 'orangen', 'kaki', 'trauben', 'heidelbeeren', 'himbeeren', 'mango', 'avocado'] -%}
+        {%- set kein_obst = 'saft|aufstrich|schokol|gefroren|kohl|konfit|joghurt|schorle|nektar|sirup|likör|mus|getrocknet|tee|bonbon|riegel|kuchen|duft|spül|shampoo|essig|quark|chips|froop|havana|club|wein|sekt|vodka|whisk|bier' -%}
+        {#- Beifang-Filter: eigene Regel je Suchbegriff, sonst muss der Begriff in Marke oder Name vorkommen -#}
+        {%- set regeln = {'butter': 'butter(?![a-zäöüß-])|kærgården', 'hackfleisch': 'hackfleisch|gehackt', 'hahnchen': 'hähnchen'} -%}
+        {%- set raus = {'hahnchen': 'wurst|fryer|würz'} -%}
+        {%- set all = states.sensor | selectattr('entity_id', 'match', 'sensor\\.marktguru_') | selectattr('attributes.retailer_name', 'defined') | rejectattr('attributes.retailer_name', 'none') | sort(attribute='entity_id') | list -%}
+        {%- set ns = namespace(seen=[], zeilen=[]) -%}
+        {%- for s in all -%}
+        {%- set a = s.attributes -%}
+        {%- set h = a.retailer_name | lower -%}
+        {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else '')) -%}
+        {%- if markt -%}
+        {%- set produkt = a.product_name or '' -%}
+        {%- set begriff = s.entity_id | regex_replace('^sensor\\.marktguru_(.*)_\\d+_\\d+$', '\\1') -%}
+        {%- set ist_obst = begriff in fruit -%}
+        {%- set text = ((a.brand_name or '') ~ ' ' ~ produkt) | lower -%}
+        {%- set norm = text | replace('ä', 'a') | replace('ö', 'o') | replace('ü', 'u') | replace('ß', 'ss') | regex_replace('[^a-z0-9]', '') -%}
+        {%- if ist_obst -%}
+        {%- set passt = not text is search(kein_obst) -%}
+        {%- else -%}
+        {%- set passt = ((text is search(regeln[begriff])) if begriff in regeln else ((begriff | replace('_', '')) in norm)) and not (begriff in raus and text is search(raus[begriff])) -%}
+        {%- endif -%}
+        {%- if passt and ((reiter == 'Obst' and ist_obst) or (reiter == markt and not ist_obst)) -%}
+        {%- set wort = (produkt | lower | regex_replace('[^a-zäöüß0-9 -]', '')).split(' ')[0] -%}
+        {%- set einheit = ((a.description or '') | regex_findall('je (.+?)(?= zzgl| oder |, |$)') | first | default('')) | trim | regex_replace('\\.$', '') -%}
+        {%- set key = markt ~ wort ~ s.state ~ einheit -%}
+        {%- if key not in ns.seen -%}
+        {%- set ns.seen = ns.seen + [key] -%}
+        {%- set marke = a.brand_name if a.brand_name and 'nobrand' not in a.brand_name and not (produkt | lower).startswith(a.brand_name | lower) else '' -%}
+        {%- set preis = s.state | float(0) -%}
+        {%- set alt = a.old_price | float(0) -%}
+        {%- set gp = ('%.2f' | format(a.grundpreis | float(0)) | replace('.', ',') ~ '&nbsp;€/' ~ a.grundpreis_einheit) if a.grundpreis and a.grundpreis_einheit else '' -%}
+        {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+        {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+        {%- set ab = (von | as_local).strftime('%d.%m.') if von is not none and von > now() else '' -%}
+        {%- set bis = (ende | as_local).strftime('%d.%m.') if ende is not none else (a.bis_datum or '') -%}
+        {%- set infos = [markt if reiter == 'Obst' else '', einheit, gp] | select | join(' · ') -%}
+        {%- set ns.zeilen = ns.zeilen + [{'eid': s.entity_id, 'markt': markt, 'einheit': einheit, 'bild': a.result_image_url or '', 'link': a.link or '', 'name': (((marke ~ ' ') if marke else '') ~ (produkt | title)) | replace('|', '/'), 'infos': infos | replace('|', '/'), 'preis': '%.2f' | format(preis) | replace('.', ','), 'alt': ('%.2f' | format(alt) | replace('.', ',')) if alt > preis else '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0, 'zeit': (('ab ' ~ ab ~ ' ') if ab else '') ~ 'bis ' ~ bis}] -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set rows = namespace(l=[]) -%}
+        {%- if ns.zeilen | count == 0 -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Keine Angebote zu euren Suchbegriffen'}] -%}
+        {%- else -%}
+        {%- set zeiten = ns.zeilen | map(attribute='zeit') | list -%}
+        {%- set haupt = namespace(zeit='', n=0) -%}
+        {%- for u in zeiten | unique -%}
+        {%- set c = zeiten | select('eq', u) | list | count -%}
+        {%- if c > haupt.n -%}{%- set haupt.zeit = u -%}{%- set haupt.n = c -%}{%- endif -%}
+        {%- endfor -%}
+        {%- set rows.l = [{'type': 'section', 'label': ns.zeilen | count ~ ' Angebote · gültig ' ~ haupt.zeit}] -%}
+        {%- for z in ns.zeilen | sort(attribute='rabatt', reverse=true) -%}
+        {%- set zeit = '' if z.zeit == haupt.zeit else z.zeit -%}
+        {%- set rows.l = rows.l + [{'type': 'custom:button-card', 'template': 'angebot_zeile', 'entity': z.eid, 'variables': {'bild': z.bild, 'link': z.link, 'name': z.name | e, 'infos': ([z.infos | replace('&nbsp;', ' '), zeit] | select | join(' · ')) | e, 'preis': z.preis, 'alt': z.alt, 'rabatt': z.rabatt | string, 'eintrag': z.name, 'notiz': [z.markt ~ ' ' ~ z.preis ~ ' €', z.einheit, z.zeit] | select | join(' · ')}}] -%}
+        {%- endfor -%}
+        {%- endif -%}
+        {{ rows.l | tojson }}
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_select.angebote_reiter
+    state: Marktkauf
+  - condition: state
+    entity: input_text.angebote_suche
+    state:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:auto-entities
+    show_empty: true
+    card:
+      type: entities
+      card_mod:
+        style:
+          .: |-
+            ha-card { max-height: 540px; overflow-y: auto; overflow-x: hidden; border-radius: 16px; }
+            #states { padding: 0 0 4px; }
+            #states > * { margin: 0 !important; }
+            #states > div > * { overflow: visible; }
+    filter:
+      template: |-
+        {%- set reiter = 'Marktkauf' -%}
+        {%- set fruit = ['apfel', 'birnen', 'bananen', 'clementinen', 'orangen', 'kaki', 'trauben', 'heidelbeeren', 'himbeeren', 'mango', 'avocado'] -%}
+        {%- set kein_obst = 'saft|aufstrich|schokol|gefroren|kohl|konfit|joghurt|schorle|nektar|sirup|likör|mus|getrocknet|tee|bonbon|riegel|kuchen|duft|spül|shampoo|essig|quark|chips|froop|havana|club|wein|sekt|vodka|whisk|bier' -%}
+        {#- Beifang-Filter: eigene Regel je Suchbegriff, sonst muss der Begriff in Marke oder Name vorkommen -#}
+        {%- set regeln = {'butter': 'butter(?![a-zäöüß-])|kærgården', 'hackfleisch': 'hackfleisch|gehackt', 'hahnchen': 'hähnchen'} -%}
+        {%- set raus = {'hahnchen': 'wurst|fryer|würz'} -%}
+        {%- set all = states.sensor | selectattr('entity_id', 'match', 'sensor\\.marktguru_') | selectattr('attributes.retailer_name', 'defined') | rejectattr('attributes.retailer_name', 'none') | sort(attribute='entity_id') | list -%}
+        {%- set ns = namespace(seen=[], zeilen=[]) -%}
+        {%- for s in all -%}
+        {%- set a = s.attributes -%}
+        {%- set h = a.retailer_name | lower -%}
+        {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else '')) -%}
+        {%- if markt -%}
+        {%- set produkt = a.product_name or '' -%}
+        {%- set begriff = s.entity_id | regex_replace('^sensor\\.marktguru_(.*)_\\d+_\\d+$', '\\1') -%}
+        {%- set ist_obst = begriff in fruit -%}
+        {%- set text = ((a.brand_name or '') ~ ' ' ~ produkt) | lower -%}
+        {%- set norm = text | replace('ä', 'a') | replace('ö', 'o') | replace('ü', 'u') | replace('ß', 'ss') | regex_replace('[^a-z0-9]', '') -%}
+        {%- if ist_obst -%}
+        {%- set passt = not text is search(kein_obst) -%}
+        {%- else -%}
+        {%- set passt = ((text is search(regeln[begriff])) if begriff in regeln else ((begriff | replace('_', '')) in norm)) and not (begriff in raus and text is search(raus[begriff])) -%}
+        {%- endif -%}
+        {%- if passt and ((reiter == 'Obst' and ist_obst) or (reiter == markt and not ist_obst)) -%}
+        {%- set wort = (produkt | lower | regex_replace('[^a-zäöüß0-9 -]', '')).split(' ')[0] -%}
+        {%- set einheit = ((a.description or '') | regex_findall('je (.+?)(?= zzgl| oder |, |$)') | first | default('')) | trim | regex_replace('\\.$', '') -%}
+        {%- set key = markt ~ wort ~ s.state ~ einheit -%}
+        {%- if key not in ns.seen -%}
+        {%- set ns.seen = ns.seen + [key] -%}
+        {%- set marke = a.brand_name if a.brand_name and 'nobrand' not in a.brand_name and not (produkt | lower).startswith(a.brand_name | lower) else '' -%}
+        {%- set preis = s.state | float(0) -%}
+        {%- set alt = a.old_price | float(0) -%}
+        {%- set gp = ('%.2f' | format(a.grundpreis | float(0)) | replace('.', ',') ~ '&nbsp;€/' ~ a.grundpreis_einheit) if a.grundpreis and a.grundpreis_einheit else '' -%}
+        {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+        {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+        {%- set ab = (von | as_local).strftime('%d.%m.') if von is not none and von > now() else '' -%}
+        {%- set bis = (ende | as_local).strftime('%d.%m.') if ende is not none else (a.bis_datum or '') -%}
+        {%- set infos = [markt if reiter == 'Obst' else '', einheit, gp] | select | join(' · ') -%}
+        {%- set ns.zeilen = ns.zeilen + [{'eid': s.entity_id, 'markt': markt, 'einheit': einheit, 'bild': a.result_image_url or '', 'link': a.link or '', 'name': (((marke ~ ' ') if marke else '') ~ (produkt | title)) | replace('|', '/'), 'infos': infos | replace('|', '/'), 'preis': '%.2f' | format(preis) | replace('.', ','), 'alt': ('%.2f' | format(alt) | replace('.', ',')) if alt > preis else '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0, 'zeit': (('ab ' ~ ab ~ ' ') if ab else '') ~ 'bis ' ~ bis}] -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set rows = namespace(l=[]) -%}
+        {%- if ns.zeilen | count == 0 -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Keine Angebote zu euren Suchbegriffen'}] -%}
+        {%- else -%}
+        {%- set zeiten = ns.zeilen | map(attribute='zeit') | list -%}
+        {%- set haupt = namespace(zeit='', n=0) -%}
+        {%- for u in zeiten | unique -%}
+        {%- set c = zeiten | select('eq', u) | list | count -%}
+        {%- if c > haupt.n -%}{%- set haupt.zeit = u -%}{%- set haupt.n = c -%}{%- endif -%}
+        {%- endfor -%}
+        {%- set rows.l = [{'type': 'section', 'label': ns.zeilen | count ~ ' Angebote · gültig ' ~ haupt.zeit}] -%}
+        {%- for z in ns.zeilen | sort(attribute='rabatt', reverse=true) -%}
+        {%- set zeit = '' if z.zeit == haupt.zeit else z.zeit -%}
+        {%- set rows.l = rows.l + [{'type': 'custom:button-card', 'template': 'angebot_zeile', 'entity': z.eid, 'variables': {'bild': z.bild, 'link': z.link, 'name': z.name | e, 'infos': ([z.infos | replace('&nbsp;', ' '), zeit] | select | join(' · ')) | e, 'preis': z.preis, 'alt': z.alt, 'rabatt': z.rabatt | string, 'eintrag': z.name, 'notiz': [z.markt ~ ' ' ~ z.preis ~ ' €', z.einheit, z.zeit] | select | join(' · ')}}] -%}
+        {%- endfor -%}
+        {%- endif -%}
+        {{ rows.l | tojson }}
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_select.angebote_reiter
+    state: REWE
+  - condition: state
+    entity: input_text.angebote_suche
+    state:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:auto-entities
+    show_empty: true
+    card:
+      type: entities
+      card_mod:
+        style:
+          .: |-
+            ha-card { max-height: 540px; overflow-y: auto; overflow-x: hidden; border-radius: 16px; }
+            #states { padding: 0 0 4px; }
+            #states > * { margin: 0 !important; }
+            #states > div > * { overflow: visible; }
+    filter:
+      template: |-
+        {%- set reiter = 'REWE' -%}
+        {%- set fruit = ['apfel', 'birnen', 'bananen', 'clementinen', 'orangen', 'kaki', 'trauben', 'heidelbeeren', 'himbeeren', 'mango', 'avocado'] -%}
+        {%- set kein_obst = 'saft|aufstrich|schokol|gefroren|kohl|konfit|joghurt|schorle|nektar|sirup|likör|mus|getrocknet|tee|bonbon|riegel|kuchen|duft|spül|shampoo|essig|quark|chips|froop|havana|club|wein|sekt|vodka|whisk|bier' -%}
+        {#- Beifang-Filter: eigene Regel je Suchbegriff, sonst muss der Begriff in Marke oder Name vorkommen -#}
+        {%- set regeln = {'butter': 'butter(?![a-zäöüß-])|kærgården', 'hackfleisch': 'hackfleisch|gehackt', 'hahnchen': 'hähnchen'} -%}
+        {%- set raus = {'hahnchen': 'wurst|fryer|würz'} -%}
+        {%- set all = states.sensor | selectattr('entity_id', 'match', 'sensor\\.marktguru_') | selectattr('attributes.retailer_name', 'defined') | rejectattr('attributes.retailer_name', 'none') | sort(attribute='entity_id') | list -%}
+        {%- set ns = namespace(seen=[], zeilen=[]) -%}
+        {%- for s in all -%}
+        {%- set a = s.attributes -%}
+        {%- set h = a.retailer_name | lower -%}
+        {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else '')) -%}
+        {%- if markt -%}
+        {%- set produkt = a.product_name or '' -%}
+        {%- set begriff = s.entity_id | regex_replace('^sensor\\.marktguru_(.*)_\\d+_\\d+$', '\\1') -%}
+        {%- set ist_obst = begriff in fruit -%}
+        {%- set text = ((a.brand_name or '') ~ ' ' ~ produkt) | lower -%}
+        {%- set norm = text | replace('ä', 'a') | replace('ö', 'o') | replace('ü', 'u') | replace('ß', 'ss') | regex_replace('[^a-z0-9]', '') -%}
+        {%- if ist_obst -%}
+        {%- set passt = not text is search(kein_obst) -%}
+        {%- else -%}
+        {%- set passt = ((text is search(regeln[begriff])) if begriff in regeln else ((begriff | replace('_', '')) in norm)) and not (begriff in raus and text is search(raus[begriff])) -%}
+        {%- endif -%}
+        {%- if passt and ((reiter == 'Obst' and ist_obst) or (reiter == markt and not ist_obst)) -%}
+        {%- set wort = (produkt | lower | regex_replace('[^a-zäöüß0-9 -]', '')).split(' ')[0] -%}
+        {%- set einheit = ((a.description or '') | regex_findall('je (.+?)(?= zzgl| oder |, |$)') | first | default('')) | trim | regex_replace('\\.$', '') -%}
+        {%- set key = markt ~ wort ~ s.state ~ einheit -%}
+        {%- if key not in ns.seen -%}
+        {%- set ns.seen = ns.seen + [key] -%}
+        {%- set marke = a.brand_name if a.brand_name and 'nobrand' not in a.brand_name and not (produkt | lower).startswith(a.brand_name | lower) else '' -%}
+        {%- set preis = s.state | float(0) -%}
+        {%- set alt = a.old_price | float(0) -%}
+        {%- set gp = ('%.2f' | format(a.grundpreis | float(0)) | replace('.', ',') ~ '&nbsp;€/' ~ a.grundpreis_einheit) if a.grundpreis and a.grundpreis_einheit else '' -%}
+        {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+        {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+        {%- set ab = (von | as_local).strftime('%d.%m.') if von is not none and von > now() else '' -%}
+        {%- set bis = (ende | as_local).strftime('%d.%m.') if ende is not none else (a.bis_datum or '') -%}
+        {%- set infos = [markt if reiter == 'Obst' else '', einheit, gp] | select | join(' · ') -%}
+        {%- set ns.zeilen = ns.zeilen + [{'eid': s.entity_id, 'markt': markt, 'einheit': einheit, 'bild': a.result_image_url or '', 'link': a.link or '', 'name': (((marke ~ ' ') if marke else '') ~ (produkt | title)) | replace('|', '/'), 'infos': infos | replace('|', '/'), 'preis': '%.2f' | format(preis) | replace('.', ','), 'alt': ('%.2f' | format(alt) | replace('.', ',')) if alt > preis else '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0, 'zeit': (('ab ' ~ ab ~ ' ') if ab else '') ~ 'bis ' ~ bis}] -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set rows = namespace(l=[]) -%}
+        {%- if ns.zeilen | count == 0 -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Keine Angebote zu euren Suchbegriffen'}] -%}
+        {%- else -%}
+        {%- set zeiten = ns.zeilen | map(attribute='zeit') | list -%}
+        {%- set haupt = namespace(zeit='', n=0) -%}
+        {%- for u in zeiten | unique -%}
+        {%- set c = zeiten | select('eq', u) | list | count -%}
+        {%- if c > haupt.n -%}{%- set haupt.zeit = u -%}{%- set haupt.n = c -%}{%- endif -%}
+        {%- endfor -%}
+        {%- set rows.l = [{'type': 'section', 'label': ns.zeilen | count ~ ' Angebote · gültig ' ~ haupt.zeit}] -%}
+        {%- for z in ns.zeilen | sort(attribute='rabatt', reverse=true) -%}
+        {%- set zeit = '' if z.zeit == haupt.zeit else z.zeit -%}
+        {%- set rows.l = rows.l + [{'type': 'custom:button-card', 'template': 'angebot_zeile', 'entity': z.eid, 'variables': {'bild': z.bild, 'link': z.link, 'name': z.name | e, 'infos': ([z.infos | replace('&nbsp;', ' '), zeit] | select | join(' · ')) | e, 'preis': z.preis, 'alt': z.alt, 'rabatt': z.rabatt | string, 'eintrag': z.name, 'notiz': [z.markt ~ ' ' ~ z.preis ~ ' €', z.einheit, z.zeit] | select | join(' · ')}}] -%}
+        {%- endfor -%}
+        {%- endif -%}
+        {{ rows.l | tojson }}
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_select.angebote_reiter
+    state: EDEKA
+  - condition: state
+    entity: input_text.angebote_suche
+    state:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:auto-entities
+    show_empty: true
+    card:
+      type: entities
+      card_mod:
+        style:
+          .: |-
+            ha-card { max-height: 540px; overflow-y: auto; overflow-x: hidden; border-radius: 16px; }
+            #states { padding: 0 0 4px; }
+            #states > * { margin: 0 !important; }
+            #states > div > * { overflow: visible; }
+    filter:
+      template: |-
+        {%- set reiter = 'EDEKA' -%}
+        {%- set fruit = ['apfel', 'birnen', 'bananen', 'clementinen', 'orangen', 'kaki', 'trauben', 'heidelbeeren', 'himbeeren', 'mango', 'avocado'] -%}
+        {%- set kein_obst = 'saft|aufstrich|schokol|gefroren|kohl|konfit|joghurt|schorle|nektar|sirup|likör|mus|getrocknet|tee|bonbon|riegel|kuchen|duft|spül|shampoo|essig|quark|chips|froop|havana|club|wein|sekt|vodka|whisk|bier' -%}
+        {#- Beifang-Filter: eigene Regel je Suchbegriff, sonst muss der Begriff in Marke oder Name vorkommen -#}
+        {%- set regeln = {'butter': 'butter(?![a-zäöüß-])|kærgården', 'hackfleisch': 'hackfleisch|gehackt', 'hahnchen': 'hähnchen'} -%}
+        {%- set raus = {'hahnchen': 'wurst|fryer|würz'} -%}
+        {%- set all = states.sensor | selectattr('entity_id', 'match', 'sensor\\.marktguru_') | selectattr('attributes.retailer_name', 'defined') | rejectattr('attributes.retailer_name', 'none') | sort(attribute='entity_id') | list -%}
+        {%- set ns = namespace(seen=[], zeilen=[]) -%}
+        {%- for s in all -%}
+        {%- set a = s.attributes -%}
+        {%- set h = a.retailer_name | lower -%}
+        {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else '')) -%}
+        {%- if markt -%}
+        {%- set produkt = a.product_name or '' -%}
+        {%- set begriff = s.entity_id | regex_replace('^sensor\\.marktguru_(.*)_\\d+_\\d+$', '\\1') -%}
+        {%- set ist_obst = begriff in fruit -%}
+        {%- set text = ((a.brand_name or '') ~ ' ' ~ produkt) | lower -%}
+        {%- set norm = text | replace('ä', 'a') | replace('ö', 'o') | replace('ü', 'u') | replace('ß', 'ss') | regex_replace('[^a-z0-9]', '') -%}
+        {%- if ist_obst -%}
+        {%- set passt = not text is search(kein_obst) -%}
+        {%- else -%}
+        {%- set passt = ((text is search(regeln[begriff])) if begriff in regeln else ((begriff | replace('_', '')) in norm)) and not (begriff in raus and text is search(raus[begriff])) -%}
+        {%- endif -%}
+        {%- if passt and ((reiter == 'Obst' and ist_obst) or (reiter == markt and not ist_obst)) -%}
+        {%- set wort = (produkt | lower | regex_replace('[^a-zäöüß0-9 -]', '')).split(' ')[0] -%}
+        {%- set einheit = ((a.description or '') | regex_findall('je (.+?)(?= zzgl| oder |, |$)') | first | default('')) | trim | regex_replace('\\.$', '') -%}
+        {%- set key = markt ~ wort ~ s.state ~ einheit -%}
+        {%- if key not in ns.seen -%}
+        {%- set ns.seen = ns.seen + [key] -%}
+        {%- set marke = a.brand_name if a.brand_name and 'nobrand' not in a.brand_name and not (produkt | lower).startswith(a.brand_name | lower) else '' -%}
+        {%- set preis = s.state | float(0) -%}
+        {%- set alt = a.old_price | float(0) -%}
+        {%- set gp = ('%.2f' | format(a.grundpreis | float(0)) | replace('.', ',') ~ '&nbsp;€/' ~ a.grundpreis_einheit) if a.grundpreis and a.grundpreis_einheit else '' -%}
+        {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+        {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+        {%- set ab = (von | as_local).strftime('%d.%m.') if von is not none and von > now() else '' -%}
+        {%- set bis = (ende | as_local).strftime('%d.%m.') if ende is not none else (a.bis_datum or '') -%}
+        {%- set infos = [markt if reiter == 'Obst' else '', einheit, gp] | select | join(' · ') -%}
+        {%- set ns.zeilen = ns.zeilen + [{'eid': s.entity_id, 'markt': markt, 'einheit': einheit, 'bild': a.result_image_url or '', 'link': a.link or '', 'name': (((marke ~ ' ') if marke else '') ~ (produkt | title)) | replace('|', '/'), 'infos': infos | replace('|', '/'), 'preis': '%.2f' | format(preis) | replace('.', ','), 'alt': ('%.2f' | format(alt) | replace('.', ',')) if alt > preis else '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0, 'zeit': (('ab ' ~ ab ~ ' ') if ab else '') ~ 'bis ' ~ bis}] -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set rows = namespace(l=[]) -%}
+        {%- if ns.zeilen | count == 0 -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Keine Angebote zu euren Suchbegriffen'}] -%}
+        {%- else -%}
+        {%- set zeiten = ns.zeilen | map(attribute='zeit') | list -%}
+        {%- set haupt = namespace(zeit='', n=0) -%}
+        {%- for u in zeiten | unique -%}
+        {%- set c = zeiten | select('eq', u) | list | count -%}
+        {%- if c > haupt.n -%}{%- set haupt.zeit = u -%}{%- set haupt.n = c -%}{%- endif -%}
+        {%- endfor -%}
+        {%- set rows.l = [{'type': 'section', 'label': ns.zeilen | count ~ ' Angebote · gültig ' ~ haupt.zeit}] -%}
+        {%- for z in ns.zeilen | sort(attribute='rabatt', reverse=true) -%}
+        {%- set zeit = '' if z.zeit == haupt.zeit else z.zeit -%}
+        {%- set rows.l = rows.l + [{'type': 'custom:button-card', 'template': 'angebot_zeile', 'entity': z.eid, 'variables': {'bild': z.bild, 'link': z.link, 'name': z.name | e, 'infos': ([z.infos | replace('&nbsp;', ' '), zeit] | select | join(' · ')) | e, 'preis': z.preis, 'alt': z.alt, 'rabatt': z.rabatt | string, 'eintrag': z.name, 'notiz': [z.markt ~ ' ' ~ z.preis ~ ' €', z.einheit, z.zeit] | select | join(' · ')}}] -%}
+        {%- endfor -%}
+        {%- endif -%}
+        {{ rows.l | tojson }}
+- type: conditional
+  conditions:
+  - condition: state
+    entity: input_text.angebote_suche
+    state_not:
+    - ''
+    - unknown
+    - unavailable
+  card:
+    type: custom:auto-entities
+    show_empty: true
+    card:
+      type: entities
+      card_mod:
+        style:
+          .: |-
+            ha-card { max-height: 540px; overflow-y: auto; overflow-x: hidden; border-radius: 16px; }
+            #states { padding: 0 0 4px; }
+            #states > * { margin: 0 !important; }
+            #states > div > * { overflow: visible; }
+    filter:
+      template: |-
+        {%- set q = states('input_text.angebote_suche') | trim -%}
+        {%- set treffer = state_attr('sensor.marktguru_suche_DEINE_PLZ', 'results') or [] -%}
+        {%- set rows = namespace(l=[]) -%}
+        {%- if state_attr('sensor.marktguru_suche_DEINE_PLZ', 'query') != q -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Suche nach „' ~ q ~ '“ läuft …'}] -%}
+        {%- elif treffer | count == 0 -%}
+        {%- set rows.l = [{'type': 'section', 'label': 'Keine Angebote für „' ~ q ~ '“ bei Marktkauf, REWE und EDEKA'}] -%}
+        {%- else -%}
+        {%- set ns = namespace(seen=[], zeilen=[]) -%}
+        {%- for a in treffer -%}
+        {%- set h = (a.retailer or '') | lower -%}
+        {%- set markt = 'Marktkauf' if h.startswith('marktkauf') else ('REWE' if h.startswith('rewe') else ('EDEKA' if h.startswith('edeka') else (a.retailer or ''))) -%}
+        {%- set produkt = a.name or '' -%}
+        {%- set einheit = ((a.description or '') | regex_findall('je (.+?)(?= zzgl| oder |, |$)') | first | default('')) | trim | regex_replace('\\.$', '') -%}
+        {%- set preis = a.price | float(0) -%}
+        {%- set key = markt ~ (produkt | lower) ~ preis ~ einheit -%}
+        {%- if key not in ns.seen -%}
+        {%- set ns.seen = ns.seen + [key] -%}
+        {%- set marke = a.brand if a.brand and 'nobrand' not in a.brand and not (produkt | lower).startswith(a.brand | lower) else '' -%}
+        {%- set alt = a.old_price | float(0) -%}
+        {%- set gp = ('%.2f' | format(a.grundpreis | float(0)) | replace('.', ',') ~ ' €/' ~ a.grundpreis_einheit) if a.grundpreis and a.grundpreis_einheit else '' -%}
+        {%- set von = (a.valid_from | as_datetime) if a.valid_from else none -%}
+        {%- set ende = (a.valid_to | as_datetime) if a.valid_to else none -%}
+        {%- set ab = (von | as_local).strftime('%d.%m.') if von is not none and von > now() else '' -%}
+        {%- set bis = (ende | as_local).strftime('%d.%m.') if ende is not none else '' -%}
+        {%- set zeit = ((('ab ' ~ ab ~ ' ') if ab else '') ~ 'bis ' ~ bis) if bis else '' -%}
+        {%- set pt = '%.2f' | format(preis) | replace('.', ',') -%}
+        {%- set ns.zeilen = ns.zeilen + [{'bild': a.image or '', 'link': a.link or '', 'name': ((marke ~ ' ') if marke else '') ~ (produkt | title), 'infos': [markt, einheit, gp, zeit] | select | join(' · '), 'preis': pt, 'alt': ('%.2f' | format(alt) | replace('.', ',')) if alt > preis else '', 'rabatt': ((1 - preis / alt) * 100) | round | int if alt > preis else 0, 'notiz': [markt ~ ' ' ~ pt ~ ' €', einheit, zeit] | select | join(' · ')}] -%}
+        {%- endif -%}
+        {%- endfor -%}
+        {%- set rows.l = [{'type': 'section', 'label': ns.zeilen | count ~ ' Treffer für „' ~ q ~ '“'}] -%}
+        {%- for z in ns.zeilen | sort(attribute='rabatt', reverse=true) -%}
+        {%- set rows.l = rows.l + [{'type': 'custom:button-card', 'template': 'angebot_zeile', 'entity': 'sensor.marktguru_suche_DEINE_PLZ', 'variables': {'bild': z.bild, 'link': z.link, 'name': z.name | e, 'infos': z.infos | e, 'preis': z.preis, 'alt': z.alt, 'rabatt': z.rabatt | string, 'eintrag': z.name, 'notiz': z.notiz}}] -%}
+        {%- endfor -%}
+        {%- endif -%}
+        {{ rows.l | tojson }}

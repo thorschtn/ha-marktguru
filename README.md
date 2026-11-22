@@ -66,3 +66,23 @@ Multiple configurations:
 You can monitor the same products for different ZIP codes.
 ## 5. Example Lovelace Card
 marktguru_card.yaml
+
+## 6. Complete example setup (this fork)
+
+The folder [`examples/`](examples/) contains the setup this fork was built for: an offers card with tabs and search, and an automation that puts weekly staples on a shopping list. Texts and article names are in German, adjust them to your household.
+
+| File | What it does |
+| --- | --- |
+| `dashboard_template.yaml` | `button_card_templates` entry for one offer row (image, name, base price, discount badge, link to the offer, add-to-list button). Goes to the top level of the dashboard's raw configuration. |
+| `dashboard_card.yaml` | The card: search field, tabs (fruit, Marktkauf, REWE, EDEKA), scrolling offer lists sorted by discount, live search results. |
+| `automation_grundartikel.yaml` | Every Thursday puts staples on the list in a per-article rhythm. If an offer is at least 15 % below the usual base price, the quantity is raised (stock-up) and the article is skipped until the stock is used up. "Fruit of the week" lists up to five fruit offers. |
+| `automation_quellen_ueberwachen.yaml` | Daily notification if marktguru or meinprospekt delivers no offers. |
+| `script_abgleich_wert_setzen.yaml` | Script to set usual price, rhythm and stock date per article, e.g. from receipts. |
+
+Requirements:
+
+- Frontend (HACS): [auto-entities](https://github.com/thomasloven/lovelace-auto-entities), [button-card](https://github.com/custom-cards/button-card), [card-mod](https://github.com/thomasloven/lovelace-card-mod)
+- Helpers: `input_select.angebote_reiter` (options `Obst`, `Marktkauf`, `REWE`, `EDEKA`), `input_text.angebote_suche`, and, each with the maximum length of 255, `input_text.einkauf_vorrat`, `input_text.einkauf_preise`, `input_text.einkauf_rhythmus`
+- A to-do list entity for the shopping list (here `todo.einkauf_bring` from the Bring! integration)
+
+Replace before use: `DEINE_PLZ` (your ZIP code, in lower case as part of the search sensor's entity id), `todo.einkauf_bring`, `notify.mobile_app_DEIN_HANDY`, the retailer names if you use other shops, and `start` plus the `artikel` list in the automation.
